@@ -56,8 +56,8 @@ export default function build (appPath, buildConfig: IBuildConfig) {
   }
 }
 
-function buildForWeapp (appPath: string, { watch }: IBuildConfig) {
-  require('./mini').build(appPath, {
+async function buildForWeapp (appPath: string, { watch }: IBuildConfig) {
+  require('./mini/webpack').build(appPath, {
     watch,
     adapter: BUILD_TYPES.WEAPP
   })
