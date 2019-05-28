@@ -30,6 +30,7 @@
     "packages/taro-quickapp",
     "packages/taro-qq",
     "packages/taro-webpack-runner",
+    "packages/taro-mini-runner",
     "packages/postcss-plugin-constparse",
     "packages/eslint-config-taro",
     "packages/eslint-plugin-taro",
