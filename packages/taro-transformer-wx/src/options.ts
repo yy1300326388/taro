@@ -6,8 +6,8 @@ import { isTestEnv } from './env'
 
 export interface Options {
   isRoot?: boolean,
-  isApp: boolean,
-  outputPath: string,
+  isApp?: boolean,
+  // outputPath: string,
   sourcePath: string,
   sourceDir?: string,
   code: string,
