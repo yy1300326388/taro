@@ -13,7 +13,7 @@ export interface Options {
   code: string,
   isTyped: boolean,
   isNormal?: boolean,
-  env?: object,
+  env?: Object,
   adapter?: Adapters,
   jsxAttributeNameReplace?: Object,
   rootProps?: object
