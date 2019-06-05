@@ -71,7 +71,7 @@ function buildForSwan (appPath: string, { watch }: IBuildConfig) {
 }
 
 function buildForAlipay (appPath: string, { watch }: IBuildConfig) {
-  require('./mini').build(appPath, {
+  require('./mini/webpack').build(appPath, {
     watch,
     adapter: BUILD_TYPES.ALIPAY
   })
