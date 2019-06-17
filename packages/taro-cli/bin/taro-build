@@ -5,7 +5,7 @@ const program = require('commander')
 const chalk = require('chalk')
 const _ = require('lodash')
 
-const build = require('../dist/build').default
+const Builder = require('../dist/build').default
 const { PROJECT_CONFIG, BUILD_TYPES } = require('../dist/util/constants')
 const appPath = process.cwd()
 const projectConfPath = path.join(appPath, PROJECT_CONFIG)
@@ -25,9 +25,11 @@ let { env, plugin } = program
 
 env = process.env.NODE_ENV || env
 
+const builder = new Builder(appPath)
+
 if (ui) {
   console.log(chalk.green(`开始编译 UI 库`))
-  build(appPath, {
+  builder.build({
     type: 'ui',
     watch
   })
@@ -38,7 +40,7 @@ if (plugin) {
   if (typeof plugin === 'boolean') {
     plugin = BUILD_TYPES.WEAPP
   }
-  build(appPath, {
+  builder.build({
     type: BUILD_TYPES.PLUGIN,
     platform: plugin,
     watch
@@ -66,7 +68,7 @@ process.env.TARO_ENV = type
 const projectConf = require(projectConfPath)(_.merge)
 console.log(chalk.green(`开始编译项目 ${chalk.bold(projectConf.projectName)}`))
 
-build(appPath, {
+builder.build({
   type,
   watch,
   port: typeof port === 'string' ? port: undefined,
