@@ -35,7 +35,7 @@ export default function (appPath: string, config: Partial<BuildConfig>): any {
     deviceRatio,
     enableSourceMap = true,
     enableExtract = false,
-    
+
     defineConstants = emptyObj,
     env = emptyObj,
     styleLoaderOption = emptyObj,
@@ -46,14 +46,12 @@ export default function (appPath: string, config: Partial<BuildConfig>): any {
     mediaUrlLoaderOption = emptyObj,
     fontUrlLoaderOption = emptyObj,
     imageUrlLoaderOption = emptyObj,
-    
+
     miniCssExtractPluginOption = emptyObj,
     esnextModules = [],
 
-    module = {
-      postcss: emptyObj
-    },
-    plugins
+    postcss = emptyObj,
+    babel
   } = config
 
   const plugin = {} as any
@@ -93,7 +91,7 @@ export default function (appPath: string, config: Partial<BuildConfig>): any {
       deviceRatio,
       enableExtract,
       enableSourceMap,
-  
+
       styleLoaderOption,
       cssLoaderOption,
       lessLoaderOption,
@@ -103,9 +101,9 @@ export default function (appPath: string, config: Partial<BuildConfig>): any {
       imageUrlLoaderOption,
       mediaUrlLoaderOption,
       esnextModules,
-  
-      module,
-      plugins,
+
+      postcss,
+      babel,
       staticDirectory
     }),
     plugin,

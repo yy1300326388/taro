@@ -9,10 +9,11 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { join, resolve } from 'path'
 import * as UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 import * as webpack from 'webpack'
+import { PostcssOption, IPostcssOption, ICopyOptions } from '@tarojs/taro/types/compile'
 
 import { recursiveMerge } from '.'
 import { getPostcssPlugins } from '../config/postcss.conf'
-import { CopyOptions, Option, PostcssOption } from './types'
+import { Option } from './types'
 
 const defaultUglifyJsOption = {
   keep_fnames: true,
@@ -125,7 +126,7 @@ const getCssoWebpackPlugin = ([cssoOption]) => {
   return pipe(mergeOption, listify, partial(getPlugin, CssoWebpackPlugin))([defaultCSSCompressOption, cssoOption])
 }
 const getCopyWebpackPlugin = ({ copy, appPath }: {
-  copy: CopyOptions,
+  copy: ICopyOptions,
   appPath: string
 }) => {
   const args = [
@@ -196,11 +197,10 @@ const getModule = (appPath: string, {
   mediaUrlLoaderOption,
   esnextModules = [] as (string | RegExp)[],
 
-  module,
-  plugins
+  postcss,
+  babel
 }) => {
-
-  const postcssOption: PostcssOption = module.postcss || {}
+  const postcssOption: IPostcssOption = postcss || {}
 
   const defaultStyleLoaderOption = {
     sourceMap: enableSourceMap
@@ -236,7 +236,7 @@ const getModule = (appPath: string, {
     cssLoaderOption
   ]
   const additionalBabelOptions = {
-    ...plugins.babel,
+    ...babel,
     sourceMap: enableSourceMap
   }
   const esnextModuleRules = getEsnextModuleRules(esnextModules)

@@ -2,11 +2,11 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 
 import { Config as IConfig } from '@tarojs/taro'
+import { TogglableOptions } from '@tarojs/taro/types/compile'
 import wxTransformer from '@tarojs/transformer-wx'
 import * as _ from 'lodash'
 import traverse from 'babel-traverse'
 
-import { IWxTransformResult, TogglableOptions } from '../util/types'
 import {
   REG_TYPESCRIPT,
   processTypeEnum,
@@ -60,7 +60,7 @@ export function isFileToBeTaroComponent (
     constantsReplaceList,
     jsxAttributeNameReplace
   } = getBuildData()
-  const transformResult: IWxTransformResult = wxTransformer({
+  const transformResult = wxTransformer({
     code,
     sourcePath: sourcePath,
     isTyped: REG_TYPESCRIPT.test(sourcePath),
@@ -69,7 +69,7 @@ export function isFileToBeTaroComponent (
     env: constantsReplaceList,
     jsxAttributeNameReplace
   })
-  const { ast }: IWxTransformResult = transformResult
+  const { ast } = transformResult
   let isTaroComponent = false
 
   traverse(ast, {
@@ -217,7 +217,7 @@ export async function buildSingleComponent (
       wxml: outputComponentWXMLPath
     }
     componentsBuildResult.set(component, buildResult)
-    const transformResult: IWxTransformResult = wxTransformer({
+    const transformResult = wxTransformer({
       code: componentContent,
       sourcePath: component,
       sourceDir,
@@ -253,7 +253,7 @@ export async function buildSingleComponent (
     if (!isQuickApp) {
       resCode = await compileScriptFile(resCode, component, outputComponentJSPath, buildAdapter)
       if (isProduction) {
-        resCode = uglifyJS(resCode, component, appPath, projectConfig!.plugins!.uglify as TogglableOptions)
+        resCode = uglifyJS(resCode, component, appPath, projectConfig!.uglify as TogglableOptions)
       }
     } else {
       // 快应用编译，搜集创建组件 ux 文件
@@ -266,7 +266,7 @@ export async function buildSingleComponent (
       const uxTxt = generateQuickAppUx({
         script: resCode,
         style: styleRelativePath,
-        imports: new Set([...importTaroSelfComponents, ...importCustomComponents]),
+        imports: new Set([...importTaroSelfComponents, ...importCustomComponents]) as any,
         template: componentWXMLContent
       })
       fs.writeFileSync(outputComponentWXMLPath, uxTxt)

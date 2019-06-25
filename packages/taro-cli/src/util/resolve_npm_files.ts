@@ -8,6 +8,8 @@ import traverse from 'babel-traverse'
 import generate from 'babel-generator'
 import * as _ from 'lodash'
 
+import { TogglableOptions } from '@tarojs/taro/types/compile'
+
 import {
   isNpmPkg,
   promoteRelativePath,
@@ -31,7 +33,7 @@ import {
 import defaultUglifyConfig from '../config/uglify'
 
 import * as npmProcess from './npm'
-import { IInstallOptions, INpmConfig, IResolvedCache, TogglableOptions } from './types'
+import { IInstallOptions, INpmConfig, IResolvedCache } from './types'
 
 const excludeNpmPkgs = ['ReactPropTypes']
 

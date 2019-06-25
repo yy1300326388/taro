@@ -1,4 +1,5 @@
 import { PageConfig } from '@tarojs/taro'
+import { IProjectConfig } from '@tarojs/taro/types/compile'
 import wxTransformer from '@tarojs/transformer-wx'
 import * as babel from 'babel-core'
 import traverse, { NodePath } from 'babel-traverse'
@@ -28,7 +29,7 @@ import {
 } from '../util/astConvert'
 import { BUILD_TYPES, processTypeEnum, PROJECT_CONFIG, REG_SCRIPTS, REG_TYPESCRIPT } from '../util/constants'
 import * as npmProcess from '../util/npm'
-import { IBuildConfig } from '../util/types'
+import { IBuildOptions } from '../util/types'
 import {
   APIS_NEED_TO_APPEND_THIS,
   deviceRatioConfigName,
@@ -53,7 +54,7 @@ import {
 } from './helper'
 
 class Compiler {
-  projectConfig
+  projectConfig: IProjectConfig
   h5Config
   routerConfig
   appPath: string
@@ -173,7 +174,7 @@ class Compiler {
     })
   }
 
-  async buildDist ({ watch, port }: IBuildConfig) {
+  async buildDist ({ watch, port }: IBuildOptions) {
     const entryFileName = this.entryFileName
     const projectConfig = this.projectConfig
     const h5Config = this.h5Config
@@ -201,6 +202,10 @@ class Compiler {
       },
       isWatch: !!watch,
       outputRoot: outputDir,
+      babel: projectConfig.babel,
+      csso: projectConfig.csso,
+      uglify: projectConfig.uglify,
+      sass: projectConfig.sass,
       plugins: projectConfig.plugins,
       port,
       sourceRoot
@@ -1200,7 +1205,7 @@ class Compiler {
 
 export { Compiler }
 
-export async function build (appPath: string, buildConfig: IBuildConfig) {
+export async function build (appPath: string, buildConfig: IBuildOptions) {
   process.env.TARO_ENV = BUILD_TYPES.H5
   const compiler = new Compiler(appPath)
   await compiler.clean()

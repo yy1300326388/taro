@@ -2,6 +2,7 @@ import * as fs from 'fs-extra'
 import * as path from 'path'
 
 import { Config as IConfig } from '@tarojs/taro'
+import { TogglableOptions } from '@tarojs/taro/types/compile'
 import wxTransformer from '@tarojs/transformer-wx'
 import * as _ from 'lodash'
 
@@ -23,7 +24,6 @@ import {
   generateQuickAppUx,
   uglifyJS
 } from '../util'
-import { IWxTransformResult, TogglableOptions } from '../util/types'
 
 import { IComponentObj } from './interface'
 import {
@@ -99,7 +99,7 @@ export async function buildSinglePage (page: string) {
     const rootProps: { [key: string]: any } = {}
     if (isQuickApp) {
       // 如果是快应用，需要提前解析一次 ast，获取 config
-      const aheadTransformResult: IWxTransformResult = wxTransformer({
+      const aheadTransformResult = wxTransformer({
         code: pageJsContent,
         sourcePath: pageJs,
         isRoot: true,
@@ -119,7 +119,7 @@ export async function buildSinglePage (page: string) {
         rootProps.enablePageScroll = true
       }
     }
-    const transformResult: IWxTransformResult = wxTransformer({
+    const transformResult = wxTransformer({
       code: pageJsContent,
       sourcePath: pageJs,
       sourceDir,
@@ -154,7 +154,7 @@ export async function buildSinglePage (page: string) {
     if (!isQuickApp) {
       resCode = await compileScriptFile(resCode, pageJs, outputPageJSPath, buildAdapter)
       if (isProduction) {
-        resCode = uglifyJS(resCode, pageJs, appPath, projectConfig!.plugins!.uglify as TogglableOptions)
+        resCode = uglifyJS(resCode, pageJs, appPath, projectConfig!.uglify as TogglableOptions)
       }
     } else {
       // 快应用编译，搜集创建页面 ux 文件
@@ -168,7 +168,7 @@ export async function buildSinglePage (page: string) {
       const uxTxt = generateQuickAppUx({
         script: resCode,
         style: styleRelativePath,
-        imports: new Set([...importTaroSelfComponents, ...importCustomComponents]),
+        imports: new Set([...importTaroSelfComponents, ...importCustomComponents]) as any,
         template: pageWXMLContent
       })
       fs.writeFileSync(outputPageWXMLPath, uxTxt)

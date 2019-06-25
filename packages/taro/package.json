@@ -23,9 +23,13 @@
   "keywords": [
     "taro"
   ],
+  "author": "O2Team",
+  "license": "MIT",
   "peerDependencies": {
     "nervjs": "^1.4.0"
   },
-  "author": "O2Team",
-  "license": "MIT"
+  "devDependencies": {
+    "webpack": "^4.35.0",
+    "webpack-dev-server": "^3.7.2"
+  }
 }
