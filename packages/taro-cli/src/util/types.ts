@@ -1,9 +1,4 @@
-import * as webpack from 'webpack'
-import * as webpackDevServer from 'webpack-dev-server'
-import * as t from 'babel-types'
-
-import { BUILD_TYPES, IMINI_APP_FILE_TYPE } from './constants'
-import { IBabelOptions } from '../config/babel'
+import { BUILD_TYPES } from './constants'
 
 export interface IInstallOptions {
   dev: boolean,

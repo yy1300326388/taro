@@ -8,6 +8,7 @@ import * as t from 'babel-types'
 import generate from 'babel-generator'
 import traverse from 'babel-traverse'
 import * as _ from 'lodash'
+import { IProjectConfig, IH5Config } from '@tarojs/taro/types/compile'
 
 import { Compiler } from './h5'
 import * as npmProcess from './util/npm'
@@ -30,7 +31,7 @@ import {
 import { IComponentObj } from './mini/interface'
 import { parseAst } from './mini/astProcess'
 import { compileDepStyles } from './mini/compileStyle'
-import { IBuildConfig, IProjectConfig, IH5Config } from './util/types'
+import { IBuildOptions } from './util/types'
 import { setBuildData as setMiniBuildData } from './mini/helper'
 
 interface IBuildData {
@@ -472,7 +473,7 @@ function watchFiles () {
     })
 }
 
-export async function build (appPath, { watch }: IBuildConfig) {
+export async function build (appPath, { watch }: IBuildOptions) {
   setBuildData(appPath)
   setMiniBuildData(appPath, BUILD_TYPES.WEAPP)
   buildEntry()

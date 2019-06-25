@@ -6,6 +6,7 @@ import * as chokidar from 'chokidar'
 import chalk from 'chalk'
 import * as _ from 'lodash'
 import * as klaw from 'klaw'
+import { TogglableOptions, ICommonPlugin, IOption } from '@tarojs/taro/types/compile'
 
 import * as Util from './util'
 import CONFIG from './config'
@@ -13,11 +14,11 @@ import * as StyleProcess from './rn/styleProcess'
 import { parseJSCode as transformJSCode } from './rn/transformJS'
 import { PROJECT_CONFIG, processTypeEnum, REG_STYLE, REG_SCRIPTS, REG_TYPESCRIPT, BUILD_TYPES } from './util/constants'
 import { convertToJDReact } from './jdreact/convert_to_jdreact'
-import { IBuildConfig } from './util/types'
+import { IBuildOptions } from './util/types'
 // import { Error } from 'tslint/lib/error'
 
 let isBuildingStyles = {}
-let styleDenpendencyTree = {}
+const styleDenpendencyTree = {}
 
 const depTree: {
   [key: string]: string[]
@@ -44,7 +45,13 @@ class Compiler {
   entryFilePath: string
   entryFileName: string
   entryBaseName: string
-  pluginsConfig
+  babel: TogglableOptions
+  csso: TogglableOptions
+  uglify: TogglableOptions
+  sass: IOption
+  less: IOption
+  stylus: IOption
+  plugins: ICommonPlugin[]
   rnConfig
   hasJDReactOutput: boolean
   // pxTransformConfig
@@ -58,7 +65,13 @@ class Compiler {
     this.entryFilePath = Util.resolveScriptPath(path.join(this.sourceDir, CONFIG.ENTRY))
     this.entryFileName = path.basename(this.entryFilePath)
     this.entryBaseName = path.basename(this.entryFilePath, path.extname(this.entryFileName))
-    this.pluginsConfig = this.projectConfig.plugins || {}
+    this.babel = this.projectConfig.babel
+    this.csso = this.projectConfig.csso
+    this.uglify = this.projectConfig.uglify
+    this.plugins = this.projectConfig.plugins
+    this.sass = this.projectConfig.sass
+    this.stylus = this.projectConfig.stylus
+    this.less = this.projectConfig.less
     this.rnConfig = this.projectConfig.rn || {}
 
     // 直接输出编译后代码到指定目录
@@ -87,7 +100,14 @@ class Compiler {
       const filePath = path.join(p)
       const fileExt = path.extname(filePath)
       Util.printLog(processTypeEnum.COMPILE, _.camelCase(fileExt).toUpperCase(), filePath)
-      return StyleProcess.loadStyle({filePath, pluginsConfig: this.pluginsConfig}, this.appPath)
+      return StyleProcess.loadStyle({
+        filePath,
+        pluginsConfig: {
+          sass: this.sass,
+          less: this.less,
+          stylus: this.stylus
+        }
+      }, this.appPath)
     })).then(resList => { // postcss
       return Promise.all(resList.map(item => {
         return StyleProcess.postCSS({...item as { css: string, filePath: string }, projectConfig: this.projectConfig})
@@ -130,7 +150,7 @@ class Compiler {
     import {AppRegistry} from 'react-native';
     import App from './${this.entryBaseName}';
     import {name as appName} from './app.json';
-  
+
     AppRegistry.registerComponent(appName, () => App);`
 
     fs.writeFileSync(path.join(this.tempPath, 'index.js'), indexJsStr)
@@ -333,7 +353,7 @@ function installDep (path: string) {
 
 export { Compiler }
 
-export async function build (appPath: string, buildConfig: IBuildConfig) {
+export async function build (appPath: string, buildConfig: IBuildOptions) {
   const {watch} = buildConfig
   process.env.TARO_ENV = BUILD_TYPES.RN
   const compiler = new Compiler(appPath)
